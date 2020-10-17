@@ -10,14 +10,14 @@ export default [
 	{
 		input: "src/component.ts",
 		output: [
-			{ file: pkg.browser, format: "umd", name: "Component", exports: "named", sourcemap: 'inline' },
-			{ file: pkg.main, format: "cjs", exports: "named", sourcemap: 'inline' },
-			{ file: pkg.module, format: "es", exports: "named", sourcemap: 'inline' },
+			{ file: pkg.browser, format: "umd", name: "Component", exports: "named", sourcemap: isProd ? false : 'inline' },
+			{ file: pkg.main, format: "cjs", exports: "named", sourcemap: isProd ? false : 'inline' },
+			{ file: pkg.module, format: "es", exports: "named", sourcemap: isProd ? false : 'inline' },
 		],
 		plugins: [
-			typescript({ tsconfig: "./build/tsconfig.json", sourceMap: true }),
+			typescript({ tsconfig: "./build/tsconfig.json", sourceMap: !isProd }),
 			resolve({ jsnext: true }),
-			commonjs({ sourceMap: true }),
+			commonjs({ sourceMap: !isProd }),
 			isProd && terser()
 		]
 	}
