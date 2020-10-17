@@ -1,121 +1,68 @@
-<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/header.png"/>
+<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/header.svg"/>
 
-[![production](https://github.com/elementumjs/component/workflows/production/badge.svg)][1]
-[![package_version](https://img.shields.io/github/package-json/v/component/listenable-data)][3]
+[![CDN](https://img.shields.io/badge/CDN-jsDelivr-blueviolet)][1]
+[![package_version](https://img.shields.io/github/package-json/v/elementumjs/component)][2]
+[![production](https://github.com/elementumjs/component/workflows/production/badge.svg)][3]
 [![reference](https://img.shields.io/badge/docs-REFERENCE-blue)][4]
-[![license](https://img.shields.io/github/license/component/listenable-data)][5]
+[![license](https://img.shields.io/github/license/elementumjs/component)][5]
 
 `@elementumjs/component` is the simplest tiny framework to work with vanilla WebComponents. Vue.js inspired syntax.
 
 - [📝 How to use it][6]
-  - [Set a single listener][7]
-  - [Set a global listener][8]
-  - [Other features][9]
-- [⚙️ Installation][10]
-  - [Import from CDN as ES Module][11]
-  - [Or install the package locally][12]
-  - [Other import methods][13]
+  - [Define a component][7]
+    - [Component `data` & `attrs`][8]
+    - [Component structure: `template` & `styles`][9]
+  - [Component life-cycle: `created`, `rendered` & `destroyed`][10]
+  - [Communication between nested components][11]
+- [🧪 Full example][12]
+- [⚙️ Installation][13]
+  - [Import from CDN as ES Module][14]
+  - [Or install the package locally][15]
+  - [Other import methods][16]
 
 ---
 
-<img src="https://raw.githubusercontent.com/elementumjs/template/develop/assets/how-to-use-it.svg"/>
+<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/how-to-use-it.svg"/>
 
 ### How to use it
 
-#### Set a single listener
+#### Define a component
 
-To listen for a single property change follow the following steps:
-
-1. Define initial data object and create the listenable object with it.
-2. Register a listener to any property that receives:
-    - `value`: Current value of attribute after the change.
-    - `last`: Last value of the attribute.
-3. Trigger a change.
-4. *(optional)* Dismiss the listener to stop listening.
+The new component definition should extend the `Component` class and use the `attach` static function to register the component with a associated HTML tag to use them on HTML files:
 
 ```javascript
-    import Data from '@elementumjs/listenable-data';
+    // import Component class
 
-    // [1] Define initial data object and create the listenable object
-    const data = new Data({
-        deep: {
-            counter: 0
-        }
-    });
+    class AwardComponent extends Component {
+        // ...
+    }
 
-    // [2] Register a listener
-    data.listen("deep.counter", (value, last) => console.log(value, last));
-
-    // [3] Trigger a change
-    data.deep.counter++; // 1 0
-
-    // [4] Dismiss the listener
-    data.dismiss("deep.counter");
+    Component.attach("award-component", AwardComponent);
 ```
 
-#### Global listener
-
-Also is possible to listen for any propery change:
-
-1. Define initial data object and create the listenable object with it.
-2. Register a listener to any property that receives:
-    - `value`: Current value of attribute after the change.
-    - `last`: Last value of the attribute.
-    - `ref`: The property reference.
-3. Trigger a change.
-4. *(optional)* Dismiss the global listener to stop listening.
+Or using shorter syntax:
 
 ```javascript
-    import Data from '@elementumjs/listenable-data';
+    // import Component class
 
-    // [1] Define initial data object and create the listenable object
-    const data = new Data({
-        deep: {
-            counter: 0
-        }
+    Component.attach("award-component", class extends Component {
+        // ...
     });
-
-    // [2] Register a listener
-    data.listenAll((value, last, ref) => console.log(value, last, ref));
-
-    // [3] Trigger a change
-    data.deep.counter++; // 1 0 "deep.counter"
-
-    // [4] Dismiss the listener
-    data.dismissAll();
 ```
 
-#### Other features
+##### Component `data` & `attrs`
 
-##### Check if single property is already defined
+##### Component structure: `template` & `styles`
 
-```javascript
-    // Define initial data object and create the listenable object
-    const data = new Data({
-        deep: {
-            counter: 0
-        }
-    });
+#### Component life-cycle: `created`, `rendered` & `destroyed`
 
-    // Print if source data contains a single reference
-    console.log(data.contains("deep.counter")) // true
-```
+#### Communication between nested components
 
-##### Get defined references
+<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/full-example.svg"/>
 
-```javascript
-    // Define initial data object and create the listenable object
-    const data = new Data({
-        deep: {
-            counter: 0
-        }
-    });
+### Full example
 
-    // Print if source data contains a single reference
-    console.log(data.refs()) // ["deep", "deep.counter"]
-```
-
-<img src="https://raw.githubusercontent.com/elementumjs/template/develop/assets/installation.svg"/>
+<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/installation.svg"/>
 
 ### Installation
 
@@ -124,7 +71,7 @@ Also is possible to listen for any propery change:
 Import from [jsDelivr CDN](https://www.jsdelivr.com/):
 
 ```javascript
-    import Data from "https://cdn.jsdelivr.net/gh/elementumjs/listenable-data/dist/listenable-data.esm.js";
+    import Component from "https://cdn.jsdelivr.net/gh/elementumjs/component/dist/component.esm.js";
 ```
 
 #### Or install the package locally
@@ -142,7 +89,7 @@ Create or edit the `.npmrc` file in the same directory as your `package.json` an
 Install via `npm`:
 
 ```sh
-    npm install @elementumjs/listenable-data
+    npm install @elementumjs/component
 ```
 
 ##### Import as ES Module
@@ -150,18 +97,18 @@ Install via `npm`:
 [ES Module](http://exploringjs.com/es6/ch_modules.html) builds are intended for use with modern bundlers like [webpack 2](https://webpack.js.org) or [rollup](http://rollupjs.org/). Use it with ES6 JavaScript `import`:
   
 ```javascript
-    import Data from '@elementumjs/listenable-data';
+    import Component from '@elementumjs/component';
 ```
 
 #### Other import methods
 
-Checkout other import methods in [`dist/README.md`](https://github.com/elementumjs/listenable-data/blob/master/dist/README.md).
+Checkout other import methods in [`dist/README.md`](./dist/README.md).
 
-[1]: https://github.com/elementumjs/listenable-data/actions?query=workflow%3Aproduction
+[1]: https://cdn.jsdelivr.net/gh/elementumjs/component/dist/component.umd.js
 
-[2]: https://github.com/elementumjs/listenable-data/actions?query=workflow%3Adevelop
+[2]: https://github.com/elementumjs/component/packages/
 
-[3]: https://github.com/elementumjs/listenable-data/packages/
+[3]: https://github.com/elementumjs/component/actions?query=workflow%3Aproduction
 
 [4]: docs/globals.md
 
@@ -169,16 +116,22 @@ Checkout other import methods in [`dist/README.md`](https://github.com/elementum
 
 [6]: #how-to-use-it
 
-[7]: #set-a-single-listener
+[7]: #define-a-component
 
-[8]: #set-a-global-listener
+[8]: #component-data-&-attrs
 
-[9]: #other-features
+[9]: #component-structure-template-&-styles
 
-[10]: #installation
+[10]: #component-life-cycle-created-rendered-&-destroyed
 
-[11]: #import-from-cdn-as-es.module
+[11]: #communication-between-nested-components
 
-[12]: #or-install-the-package-locally
+[12]: #full-example
 
-[13]: #other-import-methods
+[13]: #installation
+
+[14]: #import-from-cdn-as-es.module
+
+[15]: #or-install-the-package-locally
+
+[16]: #other-import-methods

@@ -6,106 +6,15 @@ const funcNameDel: string = "(";
 /** @private */
 const eventPrefix: string = "on-";
 
-/**
- * Component interface defines the properties and methods that the custom
- * component definition can or should have.
- *
- * @interface Component
- * @extends {HTMLElement}
- * @noInheritDoc
- */
 interface Component extends HTMLElement {
     /**
-     * Creates an instance of {@link Component}, attaching the shadowRoot if it 
-     * is not already attached, and initializing the compontent properties for 
-     * {@link Component.data} and {@link Component.attributes}.
+     * constructor contains the current class instancer reference of 
+     * {@link Component} that allows to access to the definition values safely.
      *
      * @type {typeof Component}
      * @memberof Component
      */
     constructor: typeof Component,
-    /**
-     * open property defines the mode of the current {@link Component} 
-     * {@link ShadowRoot}. By default the value is true.
-     *
-     * @type {boolean}
-     * @memberof Component
-     */
-    open: boolean,
-    /**
-     * Before the component inicialization occurs, data property contains a 
-     * function that returns the inital data definition. When the component is 
-     * initialized, data property can be used as common mutable object, filled 
-     * with initial data and with the required listeners to render the template 
-     * when those values updates.
-     * 
-     * @type {Function}
-     * @memberof Component
-     */
-    data: typeof Data,
-    /**
-     * Before the component inicialization occurs, attrs property contains a 
-     * function that returns the inital attributes definition. When the 
-     * component is initialized, attrs property can be used as common mutable 
-     * object, filled with initial attributes and with the required listeners 
-     * to render the template when those values updates.
-     *
-     * @type {Data}
-     * @memberof Component
-     */
-    attrs: typeof Data,
-    /**
-     * template function returns the component template definition using the 
-     * html string tag provided. Inside that function {@link Component.data} and 
-     * {@link Component.attrs} are accesible via `this` variable, as well as 
-     * others properties defined by the user into the component definition.
-     *
-     * @return {*} 
-     * @memberof Component
-     */
-    template(): typeof Template,
-    /**
-     * styles function returns the component style definition as string. The 
-     * definition must be CSS code and can contain properties like 
-     * {@link Component.data} and {@link Component.attrs} but the styles are not
-     * updates-reactive, so if you need to change the appearance of the 
-     * component dynamically use {@link Component.attrs} to update the element
-     * class.
-     *
-     * @memberof Component
-     */
-    styles(): string,
-    /**
-     * created method is called when the component initialization is finished 
-     * and data containers are created and initialized with provided definitions.
-     *
-     * @memberof Component
-     */
-    created(): void,
-    /**
-     * rendered method is called when the component renderization (template and 
-     * styles) is finished and the listeners are setted.
-     *
-     * @memberof Component
-     */
-    rendered(): void,
-    /**
-     * destroyed method is called when the component is detached and the 
-     * listeners are dismissed.
-     *
-     * @memberof Component
-     */
-    destroyed(): void,
-    /**
-     * attach method defines the custom element by the definition provided as 
-     * argument associated to the tag provided too.
-     *
-     * @static
-     * @param {string} tag
-     * @param {typeof Component} definition
-     * @memberof Component
-     */
-    attach(tag: string, definition: typeof Component): void
 }
 
 /**
@@ -117,8 +26,82 @@ interface Component extends HTMLElement {
  * @extends {HTMLElement}
  * @noInheritDoc
  */
-class Component extends HTMLElement {
+abstract class Component extends HTMLElement {
+    /**
+     * Creates an instance of {@link Component}, attaching the shadowRoot if it 
+     * is not already attached, and initializing the compontent properties for 
+     * {@link Component.data} and {@link Component.attributes}.
+     *
+     * @type {typeof Component}
+     * @memberof Component
+     */
     public open: boolean = true;
+
+    /**
+     * Before the component inicialization occurs, data property contains a 
+     * function that returns the inital data definition. When the component is 
+     * initialized, data property can be used as common mutable object, filled 
+     * with initial data and with the required listeners to render the template 
+     * when those values updates.
+     * 
+     * @type {Function}
+     * @memberof Component
+     */
+    abstract data: typeof Data | any;
+    /**
+     * Before the component inicialization occurs, attrs property contains a 
+     * function that returns the inital attributes definition. When the 
+     * component is initialized, attrs property can be used as common mutable 
+     * object, filled with initial attributes and with the required listeners 
+     * to render the template when those values updates.
+     *
+     * @type {Data}
+     * @memberof Component
+     */
+    abstract attrs: typeof Data | any;
+
+    /**
+     * template function returns the component template definition using the 
+     * html string tag provided. Inside that function {@link Component.data} and 
+     * {@link Component.attrs} are accesible via `this` variable, as well as 
+     * others properties defined by the user into the component definition.
+     *
+     * @return {*} 
+     * @memberof Component
+     */
+    abstract template(): typeof Template;
+    /**
+     * styles function returns the component style definition as string. The 
+     * definition must be CSS code and can contain properties like 
+     * {@link Component.data} and {@link Component.attrs} but the styles are not
+     * updates-reactive, so if you need to change the appearance of the 
+     * component dynamically use {@link Component.attrs} to update the element
+     * class.
+     *
+     * @memberof Component
+     */
+    abstract styles(): string;
+    /**
+     * created method is called when the component initialization is finished 
+     * and data containers are created and initialized with provided definitions.
+     *
+     * @memberof Component
+     */
+    abstract created(): void;
+    /**
+     * rendered method is called when the component renderization (template and 
+     * styles) is finished and the listeners are setted.
+     *
+     * @memberof Component
+     */
+    abstract rendered(): void;
+    /**
+     * destroyed method is called when the component is detached and the 
+     * listeners are dismissed.
+     *
+     * @memberof Component
+     */
+    abstract destroyed(): void;
 
     /**
      * host getter returns the host element of the current custom component if
@@ -229,10 +212,13 @@ class Component extends HTMLElement {
         ) {
             // Fill element attributes with the initial attributes.
             const tempAttrs = {}
-            this.constructor.attrs.forEach(attr => {
+            const { length } = this.constructor.attrs;
+            for (let i = 0; i < length; i++) {
+                const attr = this.constructor.attrs[i];
                 tempAttrs[attr.name] = attr.value;
                 if (!this.hasAttribute(attr.name)) this.setAttribute(attr.name, attr.value);
-            });
+            }
+
             this.attrs = new Data(tempAttrs);
         } else this.attrs = new Data({});
     }
@@ -294,7 +280,8 @@ class Component extends HTMLElement {
         let current: Element;
         while (current = iterator.nextNode() as Element) {
             const attributes = current.attributes;
-            for (let i = 0; i < attributes.length; i++) {
+            const { length } = attributes;
+            for (let i = 0; i < length; i++) {
                 const attribute: Attr = attributes.item(i);
                 if (attribute.name.startsWith(eventPrefix)) {
                     // Get event and listener function and set event listener
@@ -411,10 +398,10 @@ class Component extends HTMLElement {
      *
      * @static
      * @param {string} tag
-     * @param {*} definition
+     * @param {typeof HTMLElement} definition
      * @memberof Component
      */
-    public static attach(tag: string, definition: typeof Component): void {
+    public static attach(tag: string, definition: typeof HTMLElement): void {
         // Check the component tag and the prototype of the definition provided 
         // as arguments
         if (!tag || tag === "") throw new Error("The component tag must be provided.");
