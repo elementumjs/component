@@ -47,7 +47,7 @@ abstract class Component extends HTMLElement {
      * @type {Function}
      * @memberof Component
      */
-    abstract data: typeof Data | any;
+    public data: typeof Data | any;
     /**
      * Before the component inicialization occurs, attrs property contains a 
      * function that returns the inital attributes definition. When the 
@@ -58,7 +58,7 @@ abstract class Component extends HTMLElement {
      * @type {Data}
      * @memberof Component
      */
-    abstract attrs: typeof Data | any;
+    public attrs: typeof Data | any;
 
     /**
      * template function returns the component template definition using the 
@@ -70,6 +70,7 @@ abstract class Component extends HTMLElement {
      * @memberof Component
      */
     abstract template(): typeof Template;
+    
     /**
      * styles function returns the component style definition as string. The 
      * definition must be CSS code and can contain properties like 
@@ -80,28 +81,31 @@ abstract class Component extends HTMLElement {
      *
      * @memberof Component
      */
-    abstract styles(): string;
+    styles(): string | void {};
+    
     /**
      * created method is called when the component initialization is finished 
      * and data containers are created and initialized with provided definitions.
      *
      * @memberof Component
      */
-    abstract created(): void;
+    created(): void {};
+
     /**
      * rendered method is called when the component renderization (template and 
      * styles) is finished and the listeners are setted.
      *
      * @memberof Component
      */
-    abstract rendered(): void;
+    rendered(): void {};
+
     /**
      * destroyed method is called when the component is detached and the 
      * listeners are dismissed.
      *
      * @memberof Component
      */
-    abstract destroyed(): void;
+    destroyed(): void {};
 
     /**
      * host getter returns the host element of the current custom component if
@@ -143,12 +147,6 @@ abstract class Component extends HTMLElement {
      */
     private static get observedAttributes(): Array<string> { return Object.keys(this.attrs); }
 
-    /**
-     * Creates an instance of {@link Component}, attaching the shadowRoot if it 
-     * is not already attached, and initializing the compontent properties for 
-     * {@link Component.data} and {@link Component.attributes}.
-     * @memberof Component
-     */
     constructor() {
         super();
 
@@ -158,11 +156,11 @@ abstract class Component extends HTMLElement {
         // Init componentand fire 'created' function.
         this.initData();
         this.initAttrs();
-        this.callMethod("created");
+        this.fireMethod("created");
     }
 
     /**
-     * callMethod tries to fire a component method if it is defined in the 
+     * fireMethod tries to fire a component method if it is defined in the 
      * custom component definition, aplying the current instance and passing the
      * rest of the arguments provided as parameters.
      *
@@ -172,7 +170,7 @@ abstract class Component extends HTMLElement {
      * @return {*} The result of executing the function.
      * @memberof Component
      */
-    private callMethod(name: string, ...args: Array<any>): any {
+    private fireMethod(name: string, ...args: Array<any>): any {
         // Check if current definition has the method and call it passing the 
         // arguments.
         if (this[name] as Function === undefined) return null;
@@ -189,7 +187,7 @@ abstract class Component extends HTMLElement {
      */
     private initData(): void {
         // Init component data
-        const tempData: Object = this.callMethod("data");
+        const tempData: Object = this.fireMethod("data");
         if (tempData) this.data = new Data(tempData);
         else this.data = new Data({});
     }
@@ -301,7 +299,7 @@ abstract class Component extends HTMLElement {
     /**
      * renderTemplate method gets the template defined into the component 
      * definition calling to the method "template" using 
-     * {@link Component.callMethod} function, and fires the render template
+     * {@link Component.fireMethod} function, and fires the render template
      * function providing the current shadowRoot as target.
      *
      * @private
@@ -310,13 +308,13 @@ abstract class Component extends HTMLElement {
     private renderTemplate(): void {
         // Get template computed definition and call to render function with 
         // the shadowRoot as target.
-        const template = this.callMethod("template");
+        const template = this.fireMethod("template");
         if (template) render(template, this.shadowRoot);
     }
 
     /**
      * renderStyles method gets the computed styles from the component 
-     * definition calling "styles" method using {@link Component.callMethod} 
+     * definition calling "styles" method using {@link Component.fireMethod} 
      * function. If the shadowRoot has not a style element, it is created and
      * the styles definition is appended to it then.
      *
@@ -325,7 +323,7 @@ abstract class Component extends HTMLElement {
      */
     private renderStyles(): void {
         // If the component has a defined styles, get the definition.
-        const styles = this.callMethod("styles");
+        const styles = this.fireMethod("styles");
         if (styles) {
             const style = document.createElement("style");
             style.innerHTML = styles;
@@ -356,7 +354,7 @@ abstract class Component extends HTMLElement {
         this.listenUpdates();
         this.listenEvents();
 
-        this.callMethod("rendered");
+        this.fireMethod("rendered");
     }
 
     /**
@@ -371,7 +369,7 @@ abstract class Component extends HTMLElement {
     private disconnectedCallback() {
         // Dismiss listeners and fire 'destroyed' function.
         this.dismissListeners();
-        this.callMethod("destroyed");
+        this.fireMethod("destroyed");
     }
 
     /**
@@ -379,15 +377,16 @@ abstract class Component extends HTMLElement {
      * updates the current {@link Component.attrs} definition and fires the 
      * template render process call {@link Component.renderTemplate} method.
      * 
-     * @param {string} ref
-     * @param {*} old
-     * @param {*} val
+     * @param {string} ref The attribute updated name.
+     * @param {*} old The previous value of the attribute.
+     * @param {*} val The attribute value to update.
      * @override
      * @memberof Component
      */
-    private attributeChangedCallback(ref: string, _: any, val: any) {
+    private attributeChangedCallback(ref: string, old: any, val: any) {
         // Catch the attribute component change and updates the component
         // attrs value, then re-render the template.
+        if (val === old && val === this.attrs[ref]) return;
         this.attrs[ref] = val;
         this.renderTemplate();
     }

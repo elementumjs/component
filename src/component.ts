@@ -1,3 +1,3 @@
-import { Component, html } from "./lib/component.js";
+import { Component, html } from "./lib/component";
 
 export { Component, html };
