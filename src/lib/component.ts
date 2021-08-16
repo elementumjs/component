@@ -2,9 +2,9 @@ import Data from '@elementumjs/listenable-data';
 import { Template, html, render } from '@elementumjs/template';
 
 /** @private */
-const funcNameDel: string = "(";
+const funcNameDel: string = '(';
 /** @private */
-const eventPrefix: string = "on-";
+const eventPrefix: string = 'on-';
 
 interface Component extends HTMLElement {
     /**
@@ -119,6 +119,17 @@ abstract class Component extends HTMLElement {
     public get host(): Element {
         return (this.getRootNode() as ShadowRoot).host; 
     }
+
+    /**
+     * root getter returns the shadow root document from the current element.
+     *
+     * @readonly
+     * @type {ShadowRoot}
+     * @memberof Component
+     */
+    public get root(): ShadowRoot {
+        return this.shadowRoot; 
+    }
     
     /**
      * attrs getter returns by default an empty object. Developers can overwrite
@@ -134,6 +145,8 @@ abstract class Component extends HTMLElement {
      * @memberof Component
      */
     public static get attrs(): Object { return {}; }
+
+    public static get data(): Object { return {}; }
 
     /**
      * observedAttributes constructs an array of attributes names with the keys
@@ -151,12 +164,12 @@ abstract class Component extends HTMLElement {
         super();
 
         // Check if shadowRoot is created and attatch it.
-        if (!this.shadowRoot) this.attachShadow({ mode: this.open ? "open" : "closed" });
+        if (!this.shadowRoot) this.attachShadow({ mode: this.open ? 'open' : 'closed' });
 
         // Init componentand fire 'created' function.
         this.initData();
         this.initAttrs();
-        this.fireMethod("created");
+        this.fireMethod('created');
     }
 
     /**
@@ -173,7 +186,7 @@ abstract class Component extends HTMLElement {
     private fireMethod(name: string, ...args: Array<any>): any {
         // Check if current definition has the method and call it passing the 
         // arguments.
-        if (this[name] as Function === undefined) return null;
+        if (this[name] as Function === undefined) throw new Error('The method called does not exist.');
         return this[name].call(this, ...args);
     }
 
@@ -187,9 +200,29 @@ abstract class Component extends HTMLElement {
      */
     private initData(): void {
         // Init component data
-        const tempData: Object = this.fireMethod("data");
-        if (tempData) this.data = new Data(tempData);
-        else this.data = new Data({});
+        try {
+            const tempData = (
+                this.constructor.hasOwnProperty('data') && 
+                typeof this.constructor.data == 'object' && 
+                this.constructor.data !== null
+            ) ? Object.assign({}, this.constructor.data) : {};
+            this.data = new Data(tempData);
+        } catch { this.data = new Data({}); }
+    }
+
+    private castAttr(from, to): Number | Boolean | String {
+        if (typeof from !== 'string') throw new Error('Only can cast string values.'); 
+        
+        switch (typeof to) {
+            case 'number':
+                return Number(from);
+            case 'boolean':
+                return Boolean(from);
+            case 'string':
+                return from;
+            default: 
+                return String(from);
+        }
     }
 
     /**
@@ -202,23 +235,32 @@ abstract class Component extends HTMLElement {
      * @memberof Component
      */
     private initAttrs(): void {
-        // Init component attributes.
-        if (
-            this.constructor.hasOwnProperty("attrs") && 
-            this.constructor.attrs instanceof Array && 
-            this.constructor.attrs.length > 0    
-        ) {
-            // Fill element attributes with the initial attributes.
-            const tempAttrs = {}
-            const { length } = this.constructor.attrs;
-            for (let i = 0; i < length; i++) {
-                const attr = this.constructor.attrs[i];
-                tempAttrs[attr.name] = attr.value;
-                if (!this.hasAttribute(attr.name)) this.setAttribute(attr.name, attr.value);
-            }
+        // Get custom attributes first, then complete them with the attributes 
+        // of the HTMLElement definition.
+        const tempAttrs = (
+            this.constructor.hasOwnProperty('attrs') && 
+            typeof this.constructor.attrs == 'object' && 
+            this.constructor.attrs !== null
+        ) ? Object.assign({}, this.constructor.attrs) : {};
 
-            this.attrs = new Data(tempAttrs);
-        } else this.attrs = new Data({});
+        const attrNames = Object.keys(tempAttrs);
+        const numOfCustomAttrs = attrNames.length;
+        for (let i = 0; i < numOfCustomAttrs; i++) {
+            const name = attrNames[i];
+            const value = tempAttrs[name];
+            if (!this.hasAttribute(name)) this.setAttribute(name, value);
+        }
+        
+        const { attributes } = (<HTMLElement>this);
+        const numOfAttrs = attributes.length;
+        for (let i = 0; i < numOfAttrs; i++) {
+            const { nodeName, nodeValue } = attributes[i];
+            if (tempAttrs.hasOwnProperty(nodeName)) {
+                tempAttrs[nodeName] = this.castAttr(nodeValue, tempAttrs[nodeName]);
+            }
+        }
+        
+        this.attrs = new Data(tempAttrs);
     }
 
     /**
@@ -258,7 +300,7 @@ abstract class Component extends HTMLElement {
     /**
      * listEvents method iterates over all the child elements of the current 
      * {@link ShadowRoot} checking if any of them has an event listener defined 
-     * by an attribute that starts with "on-" followed by the event to listen. 
+     * by an attribute that starts with 'on-' followed by the event to listen. 
      * If any of the childs has an event listener defined, the function gets the 
      * listener defined and set as event listener of the element.
      *
@@ -281,7 +323,7 @@ abstract class Component extends HTMLElement {
             const { length } = attributes;
             for (let i = 0; i < length; i++) {
                 const attribute: Attr = attributes.item(i);
-                if (attribute.name.startsWith(eventPrefix)) {
+                if (attribute && attribute.name.startsWith(eventPrefix)) {
                     // Get event and listener function and set event listener
                     // over the element that has the attribute.
                     const event: string = attribute.name.split(eventPrefix)[1];
@@ -298,7 +340,7 @@ abstract class Component extends HTMLElement {
 
     /**
      * renderTemplate method gets the template defined into the component 
-     * definition calling to the method "template" using 
+     * definition calling to the method 'template' using 
      * {@link Component.fireMethod} function, and fires the render template
      * function providing the current shadowRoot as target.
      *
@@ -308,13 +350,13 @@ abstract class Component extends HTMLElement {
     private renderTemplate(): void {
         // Get template computed definition and call to render function with 
         // the shadowRoot as target.
-        const template = this.fireMethod("template");
+        const template = this.fireMethod('template');
         if (template) render(template, this.shadowRoot);
     }
 
     /**
      * renderStyles method gets the computed styles from the component 
-     * definition calling "styles" method using {@link Component.fireMethod} 
+     * definition calling 'styles' method using {@link Component.fireMethod} 
      * function. If the shadowRoot has not a style element, it is created and
      * the styles definition is appended to it then.
      *
@@ -323,13 +365,13 @@ abstract class Component extends HTMLElement {
      */
     private renderStyles(): void {
         // If the component has a defined styles, get the definition.
-        const styles = this.fireMethod("styles");
+        const styles = this.fireMethod('styles');
         if (styles) {
-            const style = document.createElement("style");
+            const style = document.createElement('style');
             style.innerHTML = styles;
 
             // If styles are already appended update it, else create it.
-            const current = this.shadowRoot.querySelector("style");
+            const current = this.shadowRoot.querySelector('style');
             if (current) current.innerHTML = style.innerHTML;
             else this.shadowRoot.appendChild(style);
         }
@@ -339,7 +381,7 @@ abstract class Component extends HTMLElement {
      * connectedCallback method is fired when the custom component is attached 
      * to the target element. It starts the render of the template and the 
      * styles, sets the listeners for component properties updates and child 
-     * elements events and then, call component definition method "created" if 
+     * elements events and then, call component definition method 'created' if 
      * it exists.
      *
      * @override
@@ -354,13 +396,13 @@ abstract class Component extends HTMLElement {
         this.listenUpdates();
         this.listenEvents();
 
-        this.fireMethod("rendered");
+        this.fireMethod('rendered');
     }
 
     /**
      * disconnectedCallback method is fired when the custom component is 
      * dettached from the target element. It dismiss de listeners over the 
-     * component properties and call component definition method "destroyed" if 
+     * component properties and call component definition method 'destroyed' if 
      * it exists.
      * 
      * @override
@@ -369,7 +411,7 @@ abstract class Component extends HTMLElement {
     private disconnectedCallback() {
         // Dismiss listeners and fire 'destroyed' function.
         this.dismissListeners();
-        this.fireMethod("destroyed");
+        this.fireMethod('destroyed');
     }
 
     /**
@@ -384,11 +426,14 @@ abstract class Component extends HTMLElement {
      * @memberof Component
      */
     private attributeChangedCallback(ref: string, old: any, val: any) {
-        // Catch the attribute component change and updates the component
-        // attrs value, then re-render the template.
-        if (val === old && val === this.attrs[ref]) return;
-        this.attrs[ref] = val;
-        this.renderTemplate();
+        // Catch the attribute component change, cast the value and updates the 
+        // component attrs value, then re-render the template.
+        if (this.attrs) {
+            const casted = this.castAttr(val, this.attrs[ref])
+            if (val === old && casted === this.attrs[ref]) return;
+            this.attrs[ref] = casted;
+            this.renderTemplate();
+        }
     }
 
     /**
@@ -403,8 +448,9 @@ abstract class Component extends HTMLElement {
     public static attach(tag: string, definition: typeof HTMLElement): void {
         // Check the component tag and the prototype of the definition provided 
         // as arguments
-        if (!tag || tag === "") throw new Error("The component tag must be provided.");
-        if (Object.getPrototypeOf(definition).name !== this.name) throw new Error("The component must extend Component class");
+        if (!definition) throw new Error('The component definition must be provided');
+        if (!tag || tag === '') throw new Error('The component tag must be provided.');
+        if (Object.getPrototypeOf(definition).name !== this.name) throw new Error('The component must extend Component class');
         
         // Call Window attach function to register the custom element.
         window.customElements.define(tag, definition);
