@@ -77,7 +77,7 @@ import { Component, html } from '@elementumjs/component';
 import './get-points-component.js';
 
 Component.attach('award-component', class extends Component {
-    data() {
+    static get data() {
         return {
             points: 0,
         }

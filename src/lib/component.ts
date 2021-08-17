@@ -19,7 +19,7 @@ interface Component extends HTMLElement {
 
 /**
  * Component class has the basic methods to control the component lifecycle,
- * mapping the properties and hot rendering the component template on properties
+ * mapping the properties and hot rende ring the component template on properties
  * updates.
  *
  * @class Component
@@ -210,14 +210,16 @@ abstract class Component extends HTMLElement {
         } catch { this.data = new Data({}); }
     }
 
-    private castAttr(from, to): Number | Boolean | String {
-        if (typeof from !== 'string') throw new Error('Only can cast string values.'); 
-        
+    private castAttr(from: String, to: any): Number | Boolean | String {
         switch (typeof to) {
             case 'number':
                 return Number(from);
             case 'boolean':
-                return Boolean(from);
+                const bool = from.toLowerCase();
+                if (bool !== 'true' && bool !== 'false')
+                    throw new Error('Boolean attributes must be \'true\' or \'false\'');
+
+                return bool === 'true';
             case 'string':
                 return from;
             default: 
@@ -292,9 +294,13 @@ abstract class Component extends HTMLElement {
      * @memberof Component
      */
     private dismissListeners(): void {
-        // Dismiss listeners for data and attributes
-        this.data.dismissAll();
-        this.attrs.dismissAll();
+        try {
+            // Dismiss listeners for data and attributes
+            this.data.dismissAll();
+            this.attrs.dismissAll();
+        } catch (error) {
+            return;    
+        }
     }
 
     /**
