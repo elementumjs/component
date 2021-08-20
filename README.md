@@ -11,17 +11,16 @@
 - [📝 How to use it][6]
     - [Component registration][7]
     - [Component definition][8]
-        - [Component data inicialization: `data` & `attrs`][9]
-            - [Watch data][10]
+        - [Component information: `data` & `attrs`][9]
+            - [Watch for component information][10]
         - [Component structure: `template` & `styles`][11]
-            - [Accesing to component metadata and event binding][12]
-    - [Component life-cycle: `created`, `rendered` & `destroyed`][13]
-    - [Communication between nested components][14]
-- [🧪 Full example][15]
-- [⚙️ Installation][16]
-    - [Import from CDN as ES Module][17]
-    - [Or install the package locally][18]
-    - [Other import methods][19]
+    - [Component life-cycle: `created`, `rendered` & `destroyed`][12]
+    - [Communication between nested components][13]
+- [🧪 Full example][14]
+- [⚙️ Installation][15]
+    - [Import from CDN as ES Module][16]
+    - [Or install the package locally][17]
+    - [Other import methods][18]
 
 ---
 
@@ -51,7 +50,7 @@ Or using shorter syntax:
 
 ### Component definition
 
-#### Component information:
+#### Component information
 
 There are two ways to initialize component information. Both of them implements [`@elementumjs/listenable-data`](https://github.com/elementumjs/listenable-data): 
 
@@ -72,7 +71,6 @@ There are two ways to initialize component information. Both of them implements 
         // ...
     }
 ```
-
 
 ##### Component attributes
 `Component.attrs` getter function defines component attributes and allows to receive information reactively from parent component. The initial definition of `Component.attrs` also defines the type of the data that it contains. It is accesible from other component methods using `Component.attrs` as an `Object`. It must be a `static` getter:
@@ -105,7 +103,7 @@ There are two ways to initialize component information. Both of them implements 
     }
 ```
 
-##### Watch component information
+##### Watch for component information
 `Component.attrs` and `Component.data` implements [`@elementumjs/listenable-data`](https://github.com/elementumjs/listenable-data) and this library allows to listen for data changes. Its API is the same for both objects:
 
 *Parent component*
@@ -123,7 +121,6 @@ There are two ways to initialize component information. Both of them implements 
         // ...
     }
 ```
-
 
 #### Component structure
 
@@ -162,7 +159,7 @@ class AwardComponent extends Component {
 }
 ```
 
-### Component life-cycle: `created`, `rendered` & `destroyed`
+### Component life-cycle
 
 The component life-cycle is composed by three steps:
 
@@ -296,24 +293,22 @@ Checkout other import methods in [`dist/README.md`](./dist/README.md).
 
 [8]: #component-definition
 
-[9]: #component-data-inicialization-data-&-attrs
+[9]: #component-information
 
-[10]: #watch-data
+[10]: #watch-for-component-information
 
 [11]: #component-structure-template-&-styles
 
-[12]: #accesing-to-component-metadata-and-event-binding
+[12]: #component-life-cycle
 
-[13]: #component-life-cycle-created-rendered-&-destroyed
+[13]: #communication-between-nested-components
 
-[14]: #communication-between-nested-components
+[14]: #full-example
 
-[15]: #full-example
+[15]: #installation
 
-[16]: #installation
+[16]: #import-from-cdn-as-es.module
 
-[17]: #import-from-cdn-as-es.module
+[17]: #or-install-the-package-locally
 
-[18]: #or-install-the-package-locally
-
-[19]: #other-import-methods
+[18]: #other-import-methods
