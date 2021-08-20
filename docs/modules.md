@@ -4,7 +4,7 @@
 
 ### Classes
 
-- [Component](classes/Component.md)
+- [Component](classes/component.md)
 
 ### Functions
 
