@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/header.svg"/>
+<img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/header.svg"/>
 
 [![CDN](https://img.shields.io/badge/CDN-jsDelivr-blueviolet)][1]
 [![package_version](https://img.shields.io/npm/v/@elementumjs/component)][2]
@@ -24,7 +24,7 @@
 
 ---
 
-<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/how-to-use-it.svg"/>
+<img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/how-to-use-it.svg"/>
 
 ## How to use it
 
@@ -209,11 +209,11 @@ The `Parent <--> Child` communication must be done passing information to the `C
 ```
 
 
-<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/full-example.svg"/>
+<img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/full-example.svg"/>
 
 ## Full example
 
-<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/demo.gif" width="350"/>
+<img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/demo.gif" width="350"/>
 
 
 Parent component definition: `award-component.js`.
@@ -272,7 +272,7 @@ Component.attach('get-points-component', class extends Component {
 });
 ```
 
-<img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/installation.svg"/>
+<img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/installation.svg"/>
 
 ## Installation
 
