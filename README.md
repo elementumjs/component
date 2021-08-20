@@ -184,6 +184,31 @@ To perform actions into the component life-cycle, overload the *created*, *rende
 
 ### Communication between nested components
 
+The `Parent <--> Child` communication must be done passing information to the `Child` using its attributes, and listening to its changes:
+
+*Parent component*
+```javascript
+    class AwardComponent extends Component {
+        // ...
+        template() {
+            // Injecting data to the child using its attributes
+            return html`<div>
+                <!---->
+                <get-points-component currentPoints="${this.data.points}"></get-points-component>
+                <!---->
+            </div>`;
+        }
+        rendered() {
+            // Listening for changes on the child attributes and updating the parent data
+            const getPointsComponent = this.root.querySelector('get-points-component');
+            getPointsComponent.attrs.listen('currentPoints', (val, old) => {
+                this.data.points = val;
+            });
+        }
+    }
+```
+
+
 <img src="https://raw.githubusercontent.com/elementumjs/component/master/assets/full-example.svg"/>
 
 ## Full example
