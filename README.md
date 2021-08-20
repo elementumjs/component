@@ -207,7 +207,7 @@ Component.attach('award-component', class extends Component {
         return `
             p {
                 font-weight: bold;
-                font-size: 16px;
+                font-size: 26px;
             }
         `;
     }
@@ -217,6 +217,12 @@ Component.attach('award-component', class extends Component {
             <get-points-component currentPoints="${this.data.points}"></get-points-component>
             <p>${ this.data.points >= 3 ? "Winner!" : "" }</p>
         </div>`;
+    }
+    rendered() {
+        const getPointsComponent = this.root.querySelector('get-points-component');
+        getPointsComponent.attrs.listen('currentPoints', (val, old) => {
+            this.data.points = val;
+        });
     }
 });
 ```
@@ -228,17 +234,15 @@ import { Component, html } from '@elementumjs/component';
 
 Component.attach('get-points-component', class extends Component {
     static get attrs() {
-        return { 
-            currentPoints: 0 
+        return {
+            currentPoints: 0
         };
     }
     template() {
-        return html`
-            <input type="button" on-click="${this.updatePoints}" value="Get points!"/>
-        `;
+        return html`<input type="button" on-click="${this.updatePoints}" value="Get points!"/>`;
     }
     updatePoints() {
-        this.host.data.points++;
+        this.attrs.currentPoints++;
     }
 });
 ```
