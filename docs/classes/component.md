@@ -14,39 +14,39 @@ updates.
 
 ### Properties
 
-- [attrs](Component.md#attrs)
-- [constructor](Component.md#constructor)
-- [data](Component.md#data)
-- [open](Component.md#open)
+- [attrs](component.md#attrs)
+- [constructor](component.md#constructor)
+- [data](component.md#data)
+- [open](component.md#open)
 
 ### Accessors
 
-- [host](Component.md#host)
-- [root](Component.md#root)
-- [attrs](Component.md#attrs)
-- [data](Component.md#data)
-- [observedAttributes](Component.md#observedattributes)
+- [host](component.md#host)
+- [root](component.md#root)
+- [attrs](component.md#attrs)
+- [data](component.md#data)
+- [observedAttributes](component.md#observedattributes)
 
 ### Methods
 
-- [attributeChangedCallback](Component.md#attributechangedcallback)
-- [castAttr](Component.md#castattr)
-- [connectedCallback](Component.md#connectedcallback)
-- [created](Component.md#created)
-- [destroyed](Component.md#destroyed)
-- [disconnectedCallback](Component.md#disconnectedcallback)
-- [dismissListeners](Component.md#dismisslisteners)
-- [fireMethod](Component.md#firemethod)
-- [initAttrs](Component.md#initattrs)
-- [initData](Component.md#initdata)
-- [listenEvents](Component.md#listenevents)
-- [listenUpdates](Component.md#listenupdates)
-- [renderStyles](Component.md#renderstyles)
-- [renderTemplate](Component.md#rendertemplate)
-- [rendered](Component.md#rendered)
-- [styles](Component.md#styles)
-- [template](Component.md#template)
-- [attach](Component.md#attach)
+- [attributeChangedCallback](component.md#attributechangedcallback)
+- [castAttr](component.md#castattr)
+- [connectedCallback](component.md#connectedcallback)
+- [created](component.md#created)
+- [destroyed](component.md#destroyed)
+- [disconnectedCallback](component.md#disconnectedcallback)
+- [dismissListeners](component.md#dismisslisteners)
+- [fireMethod](component.md#firemethod)
+- [initAttrs](component.md#initattrs)
+- [initData](component.md#initdata)
+- [listenEvents](component.md#listenevents)
+- [listenUpdates](component.md#listenupdates)
+- [renderStyles](component.md#renderstyles)
+- [renderTemplate](component.md#rendertemplate)
+- [rendered](component.md#rendered)
+- [styles](component.md#styles)
+- [template](component.md#template)
+- [attach](component.md#attach)
 
 ## Properties
 
@@ -70,10 +70,10 @@ ___
 
 ### constructor
 
-• **constructor**: typeof [`Component`](Component.md)
+• **constructor**: typeof [`Component`](component.md)
 
 constructor contains the current class instancer reference of
-[Component](Component.md) that allows to access to the definition values safely.
+[Component](component.md) that allows to access to the definition values safely.
 
 **`memberof`** Component
 
@@ -105,9 +105,9 @@ ___
 
 • **open**: `boolean` = `true`
 
-Creates an instance of [Component](Component.md), attaching the shadowRoot if it
+Creates an instance of [Component](component.md), attaching the shadowRoot if it
 is not already attached, and initializing the compontent properties for
-[Component.data](Component.md#data) and {@link Component.attributes}.
+[Component.data](component.md#data) and {@link Component.attributes}.
 
 **`memberof`** Component
 
@@ -167,8 +167,8 @@ attrs getter returns by default an empty object. Developers can overwrite
 this static getter to return their component attribute definition. Like
 with the vanilla syntax, the attributes must be defined before component
 implementation occurs. It is because the attribute definition is required
-to be mappend on [Component.observedAttributes](Component.md#observedattributes) and to listen for
-changes on it using [Component.attributeChangedCallback](Component.md#attributechangedcallback).
+to be mappend on [Component.observedAttributes](component.md#observedattributes) and to listen for
+changes on it using [Component.attributeChangedCallback](component.md#attributechangedcallback).
 
 **`readonly`**
 
@@ -205,8 +205,8 @@ ___
 • `Static` `Private` `get` **observedAttributes**(): `string`[]
 
 observedAttributes constructs an array of attributes names with the keys
-provided by [Component.attrs](Component.md#attrs) getter. The updates on these
-attributes will be handled by [Component.attributeChangedCallback](Component.md#attributechangedcallback).
+provided by [Component.attrs](component.md#attrs) getter. The updates on these
+attributes will be handled by [Component.attributeChangedCallback](component.md#attributechangedcallback).
 
 **`readonly`**
 
@@ -231,8 +231,8 @@ attributes will be handled by [Component.attributeChangedCallback](Component.md#
 ▸ `Private` **attributeChangedCallback**(`ref`, `old`, `val`): `void`
 
 attributeChangedCallback method handles any attribute value update. It
-updates the current [Component.attrs](Component.md#attrs) definition and fires the
-template render process call [Component.renderTemplate](Component.md#rendertemplate) method.
+updates the current [Component.attrs](component.md#attrs) definition and fires the
+template render process call [Component.renderTemplate](component.md#rendertemplate) method.
 
 **`override`**
 
@@ -480,7 +480,7 @@ ___
 listenUpdates method registers the handlers to listen the data or
 attributes changes. Any data change fires the template render function.
 Any attribute change, updates the {@link HTMLElement} attributes to fire
-[Component.attributeChangedCallback](Component.md#attributechangedcallback). If the current value of the
+[Component.attributeChangedCallback](component.md#attributechangedcallback). If the current value of the
 attribute has already updated, prevent the listener action.
 
 **`memberof`** Component
@@ -500,7 +500,7 @@ ___
 ▸ `Private` **renderStyles**(): `void`
 
 renderStyles method gets the computed styles from the component
-definition calling 'styles' method using [Component.fireMethod](Component.md#firemethod)
+definition calling 'styles' method using [Component.fireMethod](component.md#firemethod)
 function. If the shadowRoot has not a style element, it is created and
 the styles definition is appended to it then.
 
@@ -522,7 +522,7 @@ ___
 
 renderTemplate method gets the template defined into the component
 definition calling to the method 'template' using
-[Component.fireMethod](Component.md#firemethod) function, and fires the render template
+[Component.fireMethod](component.md#firemethod) function, and fires the render template
 function providing the current shadowRoot as target.
 
 **`memberof`** Component
@@ -562,9 +562,9 @@ ___
 
 styles function returns the component style definition as string. The
 definition must be CSS code and can contain properties like
-[Component.data](Component.md#data) and [Component.attrs](Component.md#attrs) but the styles are not
+[Component.data](component.md#data) and [Component.attrs](component.md#attrs) but the styles are not
 updates-reactive, so if you need to change the appearance of the
-component dynamically use [Component.attrs](Component.md#attrs) to update the element
+component dynamically use [Component.attrs](component.md#attrs) to update the element
 class.
 
 **`memberof`** Component
@@ -584,8 +584,8 @@ ___
 ▸ `Abstract` **template**(): `any`
 
 template function returns the component template definition using the
-html string tag provided. Inside that function [Component.data](Component.md#data) and
-[Component.attrs](Component.md#attrs) are accesible via `this` variable, as well as
+html string tag provided. Inside that function [Component.data](component.md#data) and
+[Component.attrs](component.md#attrs) are accesible via `this` variable, as well as
 others properties defined by the user into the component definition.
 
 **`memberof`** Component
