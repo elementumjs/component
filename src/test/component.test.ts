@@ -5,12 +5,12 @@ import Data from '@elementumjs/listenable-data';
 const open = jest.fn();
 Object.defineProperty(window, 'open', open);
 
-// Create basic component to test
+// Definition of base component with basic implementation to test the 
+// main funcitonallity
 class TestComponent extends Component {
     static get attrs() {
         return { 
-            value: 0,
-            number: 12.4,
+            number: 0,
             bool: false,
             str: "foo"
         };
@@ -24,11 +24,11 @@ class TestComponent extends Component {
     styles() { return `button { font-weight: bold; }` }
 
     template() { 
-        return html`<button value="${this.attrs.value}" on-click="${this.testMethod}">${this.data.text}</button>`;
+        return html`<button number="${this.attrs.number}" on-click="${this.testMethod}">${this.data.text}</button>`;
     }
 
     testMethod(e?: Event) { 
-        this.attrs.value++;
+        this.attrs.number++;
         return true; 
     }
 }
@@ -86,14 +86,13 @@ test('Component.castAttr', () => {
 
 test('Component.initAttrs', () => {
     let attrs = new Data({ 
-        value: 0,
-        number: 12.4,
+        number: 0,
         bool: false,
         str: "foo"
     });
     attrs.listenAll(expect.any(Function));
 
-    // Reset and test default attributes values
+    // Reset and test default attributes numbers
     document.body.innerHTML = '<test-component></test-component>';
     let component = document.querySelector('test-component') as TestComponent;
     expect(component.attrs).toMatchObject(attrs);
@@ -103,7 +102,6 @@ test('Component.initAttrs', () => {
     component = document.querySelector('test-component') as TestComponent;
 
     attrs = new Data({ 
-        value: 0,
         number: 200,
         bool: true,
         str: "bar"
@@ -121,7 +119,7 @@ test('Component.listenUpdates', () => {
     expect(renderHandler).toHaveBeenCalled();
 
     const attrsHandler = jest.spyOn(component as any, 'getAttribute');
-    component.attrs.value++;
+    component.attrs.number++;
     expect(attrsHandler).toHaveBeenCalled();
 });
 
@@ -142,9 +140,9 @@ test('Component.listenEvents', () => {
 
     const child = component.root.querySelector('button');
     child.dispatchEvent(new Event('click'));
-    expect(component.attrs.value).toBe(1);
+    expect(component.attrs.number).toBe(1);
     child.dispatchEvent(new Event('mouseover'));
-    expect(component.attrs.value).toBe(1);
+    expect(component.attrs.number).toBe(1);
 });
 
 test('Component.renderTemplate', () => {
@@ -154,8 +152,8 @@ test('Component.renderTemplate', () => {
     // Test render template cycles performing changes over the component data 
     // and attributes
     component.data.text = 'Bye!';
-    component.attrs.value++;
-    component.setAttribute('value', '10');
+    component.attrs.number++;
+    component.setAttribute('number', '10');
     expect(renderHandler).toHaveBeenCalledTimes(3);
 });
 
@@ -193,8 +191,8 @@ test('Component.attributeChangedCallback', () => {
     const component = new TestComponent();
     document.body.appendChild(component);
 
-    component.attrs.value++;
-    expect(component.getAttribute('value')).toBe('1');
-    component.setAttribute('value', '10');
-    expect(component.attrs.value).toBe(10);
+    component.attrs.number++;
+    expect(component.getAttribute('number')).toBe('1');
+    component.setAttribute('number', '10');
+    expect(component.attrs.number).toBe(10);
 });

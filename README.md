@@ -11,7 +11,7 @@
 - [📝 How to use it][6]
     - [Component registration][7]
     - [Component definition][8]
-        - [Component metadata: `data` & `attrs`][9]
+        - [Component data inicialization: `data` & `attrs`][9]
             - [Watch data][10]
         - [Component structure: `template` & `styles`][11]
             - [Accesing to component metadata and event binding][12]
@@ -51,15 +51,139 @@ Or using shorter syntax:
 
 ### Component definition
 
-#### Component metadata: `data` & `attrs`
+#### Component information:
 
-##### Watch data
+There are two ways to initialize component information. Both of them implements [`@elementumjs/listenable-data`](https://github.com/elementumjs/listenable-data): 
 
-#### Component structure: `template` & `styles`
+ * `Component.data`: That defines the component initial data.
+ * `Component.attrs`: That defines the component attributes and allows to the component to receive information reactively from parent.
 
-##### Accesing to component metadata and event binding
+##### Component data
+`Component.data` getter function defines component initial data. It is accesible from other component methods using `Component.data` as an `Object`.
+
+*Parent component*
+```javascript
+    class AwardComponent extends Component {
+        static get data() {
+            return {
+                points: 0
+            }
+        }
+        // ...
+    }
+```
+
+
+##### Component attributes
+`Component.attrs` getter function defines component attributes and allows to receive information reactively from parent component. The initial definition of `Component.attrs` also defines the type of the data that it contains. It is accesible from other component methods using `Component.attrs` as an `Object`. It must be a `static` getter:
+
+*Child component*
+```javascript
+    class GetPointsComponent extends Component {
+        static get attrs() {
+            return {
+                currentPoints: 0
+            }
+        }
+        // ...
+    }
+
+```
+
+*Parent component*
+```javascript
+    class AwardComponent extends Component {
+        // ...
+        template() {
+            return html`<div>
+                <!---->
+                <get-points-component currentPoints="${this.data.points}"></get-points-component>
+                <!---->
+            </div>`;
+        }
+        // ...
+    }
+```
+
+##### Watch component information
+`Component.attrs` and `Component.data` implements [`@elementumjs/listenable-data`](https://github.com/elementumjs/listenable-data) and this library allows to listen for data changes. Its API is the same for both objects:
+
+*Parent component*
+```javascript
+    class AwardComponent extends Component {
+        // ...
+        changeListener(value, oldValue) {
+            console.log(value, oldValue);
+        }
+
+        rendered() {
+            this.data.listen('points', this.changeListener);
+            // or this.attrs.listen(path, listener);
+        }
+        // ...
+    }
+```
+
+
+#### Component structure
+
+To define the component structure the methods `Component.styles()` and `Component.template()` must be defined in this way:
+
+##### Component template
+The `Component.template()` must return a `Template` object (from [`@elementumjs/template`](https://github.com/elementumjs/template)). In this case the template can be filled with references to `Component.attrs` and `Component.data`. To learn more about the template syntax checkout the `@elementumjs/template` [documentation](https://github.com/elementumjs/template)).
+
+```javascript
+class AwardComponent extends Component {
+    // ...
+    template() {
+        return html`<div>
+            <span>You got ${this.data.points} points!</span>
+            <get-points-component currentPoints="${this.data.points}"></get-points-component>
+            <p>${ this.data.points >= 3 ? "Winner!" : "" }</p>
+        </div>`;
+    }
+}
+```
+
+##### Component styles
+The `Component.styles()` must return an string with the CSS definitions:
+
+```javascript
+class AwardComponent extends Component {
+    // ...
+    styles() {
+        return `
+            p {
+                font-weight: bold;
+                font-size: 16px;
+            }
+        `;
+    }
+}
+```
 
 ### Component life-cycle: `created`, `rendered` & `destroyed`
+
+The component life-cycle is composed by three steps:
+
+| Step | Actions performed | Triggered by | Method fired at completion |
+|:---|:---|:---|:---|
+|Creation|Data and attributes initialization. `Component.data` and `Component.attrs` are ready!| `let c = new MyComponent();`| `Component.created()` |
+|Renderization|Component renderization and data & events listeners registration. DOM ready via `Component.root`!|`document.body.appendChild(c);`|`Component.rendered()`|
+|Destruction|Component destruction and listeners unregistration.|`document.body.removeChild(c);`|`Component.destroyed()`|
+
+To perform actions into the component life-cycle, overload the *created*, *rendered* and *destroyed* methods:
+
+*Parent component*
+```javascript
+    class AwardComponent extends Component {
+        // ...
+        created() { console.log('created'); }
+        rendered() { console.log('rendered'); }
+        destroyed() { console.log('destroyed'); }
+        // ...
+    }
+```
 
 ### Communication between nested components
 
@@ -93,7 +217,7 @@ Component.attach('award-component', class extends Component {
     template() {
         return html`<div>
             <span>You got ${this.data.points} points!</span>
-            <get-points-component initial="${this.data.points}"></get-points-component>
+            <get-points-component currentPoints="${this.data.points}"></get-points-component>
             <p>${ this.data.points >= 3 ? "Winner!" : "" }</p>
         </div>`;
     }
@@ -107,7 +231,9 @@ import { Component, html } from '@elementumjs/component';
 
 Component.attach('get-points-component', class extends Component {
     static get attrs() {
-        return { initial: null };
+        return { 
+            currentPoints: 0 
+        };
     }
     template() {
         return html`
@@ -170,7 +296,7 @@ Checkout other import methods in [`dist/README.md`](./dist/README.md).
 
 [8]: #component-definition
 
-[9]: #component-metadata-data-&-attrs
+[9]: #component-data-inicialization-data-&-attrs
 
 [10]: #watch-data
 

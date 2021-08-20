@@ -281,8 +281,10 @@ abstract class Component extends HTMLElement {
 
         // Set listener to update element attributes
         this.attrs.listenAll((val: any, _: any, ref: string) => {
-            if (this.getAttribute(ref) === val) return;
-            this.setAttribute(ref, val);
+            if (typeof val === 'function') return;
+            
+            this.renderTemplate();
+            if (this.getAttribute(ref) !== String(val)) this.setAttribute(ref, val);
         });
     }
 
@@ -434,11 +436,10 @@ abstract class Component extends HTMLElement {
     private attributeChangedCallback(ref: string, old: any, val: any) {
         // Catch the attribute component change, cast the value and updates the 
         // component attrs value, then re-render the template.
-        if (this.attrs) {
-            const casted = this.castAttr(val, this.attrs[ref])
-            if (val === old && casted === this.attrs[ref]) return;
+        if (this.attrs || val === old) {
+            const casted = this.castAttr(val, this.attrs[ref]);
+            if (casted === this.attrs[ref]) return;
             this.attrs[ref] = casted;
-            this.renderTemplate();
         }
     }
 
