@@ -297,7 +297,7 @@ Checkout other import methods in [`dist/README.md`](./dist/README.md).
 
 [10]: #watch-for-component-information
 
-[11]: #component-structure-template-&-styles
+[11]: #component-structure
 
 [12]: #component-life-cycle
 
