@@ -22,8 +22,8 @@
     - [Or install the package locally][17]
     - [Other import methods][18]
 
----
 
+---
 <img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/how-to-use-it.svg"/>
 
 ## How to use it
@@ -323,7 +323,7 @@ Checkout other import methods in [`dist/README.md`](./dist/README.md).
 
 [3]: https://github.com/elementumjs/component/actions?query=workflow%3Aproduction
 
-[4]: docs/modules.md
+[4]: modules.html
 
 [5]: LICENSE
 
