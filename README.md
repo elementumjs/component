@@ -215,7 +215,6 @@ The `Parent <--> Child` communication must be done passing information to the `C
 
 <img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/demo.gif" width="350"/>
 
-
 Parent component definition: `award-component.js`.
 
 ```javascript
@@ -270,6 +269,19 @@ Component.attach('get-points-component', class extends Component {
         this.attrs.currentPoints++;
     }
 });
+```
+
+`index.html` definition:
+
+```html
+<!DOCTYPE html>
+<html>
+	<body>
+		<award-component></award-component>
+		
+		<script type="module" src="./award-component.js"></script>
+	</body>
+</html>
 ```
 
 <img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/installation.svg"/>

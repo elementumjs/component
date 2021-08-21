@@ -270,6 +270,19 @@ Component.attach('get-points-component', class extends Component {
 });
 ```
 
+`index.html` definition:
+
+```html
+<!DOCTYPE html>
+<html>
+	<body>
+		<award-component></award-component>
+		
+		<script type="module" src="./award-component.js"></script>
+	</body>
+</html>
+```
+
 <img src="https://raw.githubusercontent.com/elementumjs/component/main/assets/installation.svg"/>
 
 ## Installation

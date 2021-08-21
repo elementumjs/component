@@ -1,10 +1,18 @@
 import Data from '@elementumjs/listenable-data';
-import { Template, html, render } from '@elementumjs/template';
+import { Template, html as tag, render } from '@elementumjs/template';
 
 /** @private */
 const funcNameDel: string = '(';
 /** @private */
 const eventPrefix: string = 'on-';
+
+/**
+ * The html function its a tag for string templating that creates a {@link https://github.com/elementumjs/template | Template}.
+ * @param {Array<any>} args The tagged template result that contains the HTML 
+ * struct and its slots values interpolated. Read more about it {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates | here}.
+ * @return {@link https://github.com/elementumjs/template | Template}
+ */
+function html(...args: Array<any>): Template { return tag(...args) }
 
 interface Component extends HTMLElement {
     /**
@@ -14,7 +22,7 @@ interface Component extends HTMLElement {
      * @type {typeof Component}
      * @memberof Component
      */
-    constructor: typeof Component,
+    constructor: typeof Component
 }
 
 /**
