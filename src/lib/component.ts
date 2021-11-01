@@ -12,7 +12,7 @@ const eventPrefix: string = 'on-';
  * struct and its slots values interpolated. Read more about it {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates | here}.
  * @return {@link https://github.com/elementumjs/template | Template}
  */
-const html: Function = tag;
+function html(...args: Array<any>): unknown { return tag(...args); }
 
 interface Component extends HTMLElement {
     /**
