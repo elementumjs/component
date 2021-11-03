@@ -1,6 +1,6 @@
 {
   "name": "@elementumjs/component",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Simple WebComponents library based on ElementumJS utils",
   "files": [
     "src/*.js",
@@ -51,6 +51,6 @@
   },
   "dependencies": {
     "@elementumjs/listenable-data": "^0.1.13",
-    "@elementumjs/template": "^0.2.0"
+    "@elementumjs/template": "^0.2.1"
   }
 }
